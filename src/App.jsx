@@ -16,6 +16,7 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import Dashboard from "./pages/Dashboard";
 import Favorite from "./pages/Favorite";
 import ResumeBuilder from "./components/dashboard/ResumeBuilder";
+import ResumePage from "./pages/ResumePage";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) {
@@ -34,7 +35,6 @@ const App = () => {
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <TooltipProvider>
-          <Toaster position="bottom-center" richColors />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
@@ -48,6 +48,7 @@ const App = () => {
               </Route>
 
               <Route path="/builder" element={<ResumeBuilder />} />
+              <Route path="/resume/:id" element={<ResumePage />} />
 
               {/* Catch-all */}
               < Route path="*" element={<NotFound />} />

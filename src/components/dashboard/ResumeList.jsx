@@ -34,6 +34,9 @@ import { toast } from "sonner";
 import { Separator } from "../ui/separator";
 import { useUser } from "@clerk/clerk-react";
 import { Skeleton } from "../ui/skeleton";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { ResumeActionSheet } from "../actionSheets/ResumeActionSheet";
+import { useNavigate } from "react-router-dom";
 
 const createResumeSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
@@ -46,13 +49,16 @@ const createResumeSchema = z.object({
 function ResumeList() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const { user } = useUser();
 
     const accentColors = useQuery(api.color.getColors);
-    const userResumes = useQuery(api.resume.getResumesByUserId, {
-        userId: user?.id,
-    });
+    const userResumes = useQuery(
+        api.resume.getResumesByUserId,
+        user?.id ? { userId: user.id } : "skip" 
+    );
+
 
     const createResume = useMutation(api.resume.create);
 
@@ -267,6 +273,7 @@ function ResumeList() {
                 {userResumes?.map((resume) => (
                     <Card
                         key={resume._id}
+                        onClick={() => navigate(`/resume/${resume._id}`)}
                         className="p-2 cursor-pointer group transition-all hover:scale-[1.02] w-full"
                         style={{
                             backgroundColor: `${resume.accentColor}20`,
@@ -277,12 +284,10 @@ function ResumeList() {
                             <div>
                                 <div className="flex items-center justify-between">
                                     <FileText size={18} />
-
                                 </div>
                                 <p className="font-semibold mt-2 truncate">{resume.title}</p>
                                 <p className="text-sm text-muted-foreground capitalize">
                                     {resume.templateId} Template
-
                                 </p>
                                 <span className="text-[10px] text-muted-foreground">
                                     Created At {new Date(resume.createdAt).toLocaleDateString()}
@@ -292,12 +297,11 @@ function ResumeList() {
                                 className="w-full h-1.5 rounded-full mt-3"
                                 style={{ backgroundColor: resume.accentColor }}
                             />
-                            <Button size={"icon"} className={"absolute rounded-full cursor-pointer top-2 right-2 hidden group-hover:flex"} variant={"ghost"}>
-                                <EllipsisVertical />
-                            </Button>
+                            <ResumeActionSheet resumeId={resume._id} />
                         </CardContent>
                     </Card>
                 ))}
+
             </div>
 
         </div>

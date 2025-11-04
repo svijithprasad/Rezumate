@@ -12,6 +12,8 @@ import { Toaster } from "sonner";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <Toaster position="bottom-center" richColors />
+
       <App />
     </ThemeProvider>
   </StrictMode>
